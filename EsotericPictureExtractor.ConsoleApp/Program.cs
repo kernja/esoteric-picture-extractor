@@ -12,12 +12,15 @@ namespace EsotericPictureExtractor.ConsoleApp
             var services = CreateServices();
 
             var jpg2kService = services.GetRequiredService<IJPG2KService>();
+            var bz2Service = services.GetRequiredService<IBZ2Service>();
             var fileSystemService = services.GetRequiredService<IFileSystemService>();
-            var files = jpg2kService.ExtractContents("C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Raster0_CNT.dat");
+            var files = bz2Service.ExtractContents("C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Vector0_CNT.dat");
+            //var files = jpg2kService.ExtractContents("C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Raster0_CNT.dat");
 
             if (files.Count > 0)
             {
-                fileSystemService.WriteBinary(".\\test.jp2", files.First());
+                fileSystemService.WriteBinary(".\\test.bz2", files.First());
+                //fileSystemService.WriteBinary(".\\test.jp2", files.First());
             }
         }
 
@@ -31,6 +34,7 @@ namespace EsotericPictureExtractor.ConsoleApp
                 .AddTransient<IFileSystemService, FileSystemService>()
                 .AddTransient<IFileExtractService, FileExtractService>()
                 .AddTransient<IJPG2KService, JPG2KService>()
+                .AddTransient<IBZ2Service, BZ2Service>()
                 .AddSingleton<IConfiguration>(configuration);
 
             return serviceProvider.BuildServiceProvider();
