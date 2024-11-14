@@ -1,0 +1,94 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EsotericPictureExtractor.Services
+{
+    public interface IFileSystemService
+    {
+        string ReadText(string path);
+        byte[] ReadBinary(string path);
+        void WriteText(string path, string[] content);
+        void WriteText(string path, string content);
+        void WriteBinary(string path, byte[] content);
+    }
+    public class FileSystemService : IFileSystemService
+    {
+        public string ReadText(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
+            if (File.Exists(path) == false) throw new FileNotFoundException(path);
+
+            try
+            {
+                return File.ReadAllText(path);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to load file, see inner exception.", ex);
+            }
+        }
+
+        public byte[] ReadBinary(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
+            if (File.Exists(path) == false) throw new FileNotFoundException(path);
+
+            try
+            {
+                return File.ReadAllBytes(path);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to load file, see inner exception.", ex);
+            }
+        }
+
+        public void WriteText(string path, string[] content)
+        {
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
+            if (File.Exists(path) == false) throw new FileNotFoundException(path);
+
+            try
+            {
+                File.WriteAllLines(path, content);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to load file, see inner exception.", ex);
+            }
+           
+        }
+        public void WriteText(string path, string content)
+        {
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
+           
+            try
+            {
+                File.WriteAllText(path, content);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to load file, see inner exception.", ex);
+            }
+            
+        }
+
+        public void WriteBinary(string path, byte[] content)
+        {
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
+            
+            try
+            {
+                File.WriteAllBytes(path, content);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to load file, see inner exception.", ex);
+            }
+
+        }
+    }
+}
