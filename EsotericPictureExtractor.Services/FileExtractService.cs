@@ -38,8 +38,7 @@ namespace EsotericPictureExtractor.Services
             var delimiter = ',';
             var results = new List<byte[]>();
             
-            try
-            {
+           
                 var sofString = string.Join(delimiter, magicSOF.Select(x => x.ToString()).ToArray());
                 var eofString = string.Join(delimiter, magicEOF.Select(x => x.ToString()).ToArray());
                 var fileString = string.Join(delimiter, sourceData.Select(x => x.ToString()).ToArray());
@@ -53,22 +52,25 @@ namespace EsotericPictureExtractor.Services
 
                     foreach (var f in fileArray)
                     {
-                        var innerString = f.Split(eofString)[0];
-                        innerString = $"{sofString}{innerString}{eofString}";
-                        innerString = innerString.TrimEnd(',');
-
-                        using (MemoryStream ms = new MemoryStream(innerString.Split(delimiter).Where(x => string.IsNullOrWhiteSpace(x) == false).Select(x => byte.Parse(x)).ToArray()))
+                        try
                         {
-                            ms.Position = 0;
-                            results.Add(ms.ToArray());
+                            var innerString = f.Split(eofString)[0];
+                            innerString = $"{sofString}{innerString}{eofString}";
+                            innerString = innerString.TrimEnd(',');
+
+                            using (MemoryStream ms = new MemoryStream(innerString.Split(delimiter).Where(x => string.IsNullOrWhiteSpace(x) == false).Select(x => byte.Parse(x)).ToArray()))
+                            {
+                                ms.Position = 0;
+                                results.Add(ms.ToArray());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            //throw new Exception("Unable to extract file contents, see inner exception.", ex);
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Unable to extract file contents, see inner exception.", ex);
-            }
+            
 
             return results;
         }
