@@ -9,8 +9,8 @@ namespace EsotericPictureExtractor.Services
 {
     public interface IFileExtractService
     {
-        IList<byte[]> ExtractContents(byte[] sourceData, byte[] magicSOF, byte[] magicEOF);
-        IList<byte[]> ExtractContents(string filePath, byte[] magicSOF, byte[] magicEOF);
+        IList<byte[]> ExtractContents(byte[] sourceData, byte[] magicSOF, byte[] magicEOF, int overread = 0);
+        IList<byte[]> ExtractContents(string filePath, byte[] magicSOF, byte[] magicEOF, int overread = 0);
 
     }
     public class FileExtractService : IFileExtractService
@@ -23,13 +23,13 @@ namespace EsotericPictureExtractor.Services
             if (_fileSystem == null) throw new InvalidOperationException("IFileSystemService cannot be null.");
         }
 
-        public IList<byte[]> ExtractContents(string filePath, byte[] magicSOF, byte[] magicEOF)
+        public IList<byte[]> ExtractContents(string filePath, byte[] magicSOF, byte[] magicEOF, int overread = 0)
         {
             if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentOutOfRangeException(nameof(filePath));
-            return this.ExtractContents(_fileSystem.ReadBinary(filePath), magicSOF, magicEOF);
+            return this.ExtractContents(_fileSystem.ReadBinary(filePath), magicSOF, magicEOF, overread);
 
         }
-        public IList<byte[]> ExtractContents(byte[] sourceData, byte[] magicSOF, byte[] magicEOF)
+        public IList<byte[]> ExtractContents(byte[] sourceData, byte[] magicSOF, byte[] magicEOF, int overread = 0)
         {
             if (sourceData == null) throw new ArgumentNullException(nameof(sourceData));
             if (magicSOF == null) throw new ArgumentNullException(nameof(magicSOF));
@@ -54,16 +54,25 @@ namespace EsotericPictureExtractor.Services
                     {
                         try
                         {
-                            var innerString = f.Split(eofString)[0];
+                            var eofSplit = f.Split(eofString);
+                            var innerString = eofSplit[0];
+
                             innerString = $"{sofString}{innerString}{eofString}";
                             innerString = innerString.TrimEnd(',');
 
-                            using (MemoryStream ms = new MemoryStream(innerString.Split(delimiter).Where(x => string.IsNullOrWhiteSpace(x) == false).Select(x => byte.Parse(x)).ToArray()))
+                            if (overread > 0)
                             {
-                                ms.Position = 0;
-                                results.Add(ms.ToArray());
+                                var overString = eofSplit[1].Split(delimiter);
+                                var overBytes = overString.Skip(1).Take(overread).ToArray();
+                                innerString = $"{innerString},{string.Join(delimiter, overBytes)}";
                             }
-                        }
+
+                            using (MemoryStream ms = new MemoryStream(innerString.Split(delimiter).Where(x => string.IsNullOrWhiteSpace(x) == false).Select(x => byte.Parse(x)).ToArray()))
+                                {
+                                    ms.Position = 0;
+                                    results.Add(ms.ToArray());
+                                }
+                            }
                         catch (Exception ex)
                         {
                             //throw new Exception("Unable to extract file contents, see inner exception.", ex);

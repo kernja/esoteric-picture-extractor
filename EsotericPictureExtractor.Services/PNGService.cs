@@ -22,7 +22,7 @@ namespace EsotericPictureExtractor.Services
             var magicSOF = new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 };
             var magicEOF = new byte[] { 73, 69, 78, 68 };
 
-            return _fileExtractService.ExtractContents(filePath, magicSOF, magicEOF);
+            return _fileExtractService.ExtractContents(filePath, magicSOF, magicEOF, 4);
         }
     }
 }

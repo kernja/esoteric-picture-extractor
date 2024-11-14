@@ -13,16 +13,17 @@ namespace EsotericPictureExtractor.ConsoleApp
 
             var jpg2kService = services.GetRequiredService<IJPG2KService>();
             var bz2Service = services.GetRequiredService<IBZ2Service>();
-            var pngService = services.GetRequiredService<IPNGService>();
+            var pngService = services.GetRequiredService<PNGService>();
             var jfifService = services.GetRequiredService<IJFIFService>();
+            var hPIService = services.GetRequiredService<IHPIService>();
             var fileSystemService = services.GetRequiredService<IFileSystemService>();
-            var files = jfifService.ExtractContents("C:\\Users\\Jeff\\Downloads\\hpi-images\\970801_4743_1014_oslps.hpi");
-//            var files = bz2Service.ExtractContents("C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Vector1_CNT.dat");
+            var files = hPIService.ExtractContents("C:\\Users\\Jeff\\Downloads\\hpi-images\\970801_4743_1014_oslps.hpi");
+            //var files = bz2Service.ExtractContents("C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Vector1_CNT.dat");
             //var files = jpg2kService.ExtractContents("C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Raster0_CNT.dat");
 
             if (files.Count > 0)
             {
-                fileSystemService.WriteBinary(".\\test3.jpg", files.First());
+                fileSystemService.WriteBinary(".\\test4.png", files.First());
                 //fileSystemService.WriteBinary(".\\test.jp2", files.First());
             }
         }
@@ -38,8 +39,9 @@ namespace EsotericPictureExtractor.ConsoleApp
                 .AddTransient<IFileExtractService, FileExtractService>()
                 .AddTransient<IJPG2KService, JPG2KService>()
                 .AddTransient<IBZ2Service, BZ2Service>()
-                .AddTransient<IPNGService, PNGService>()
+                .AddTransient<PNGService, PNGService>()
                 .AddTransient<IJFIFService, JFIFService>()
+                .AddTransient<IHPIService, HPIService>()
                 .AddSingleton<IConfiguration>(configuration);
 
             return serviceProvider.BuildServiceProvider();
