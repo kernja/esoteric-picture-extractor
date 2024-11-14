@@ -15,8 +15,8 @@ namespace EsotericPictureExtractor.Services
     public class HPIService : IHPIService
     {
         private readonly IJFIFService _jfifService;
-        private readonly PNGService _pngService;
-        public HPIService(IJFIFService jfifService, PNGService pngService) {
+        private readonly IPNGService _pngService;
+        public HPIService(IJFIFService jfifService, IPNGService pngService) {
             _jfifService = jfifService;
             _pngService = pngService;
         }
