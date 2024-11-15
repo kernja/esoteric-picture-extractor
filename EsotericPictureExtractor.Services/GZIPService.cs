@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EsotericPictureExtractor.Services
 {
-    public interface IJFIFService
+    public interface IGZIPService
     {
         IList<byte[]> ExtractContents(string filePath);
     }
 
-    public class JFIFService : IJFIFService
+    public class GZIPService : IGZIPService
     {
         private readonly IFileExtractService _fileExtractService;
-        public JFIFService(IFileExtractService fileExtractService) { 
+        public GZIPService(IFileExtractService fileExtractService) { 
             _fileExtractService = fileExtractService;
         }
         public IList<byte[]> ExtractContents(string filePath)
         {
-            var magicSOF = new byte[] { 255, 216, 255 };
-            var magicEOF = new byte[] { 255, 217 };
-        
-            return _fileExtractService.ExtractContents(filePath, magicSOF, magicEOF);
+            var magicSOF = new byte[] { 31, 139, 08, 00 };
+
+            return _fileExtractService.ExtractContents(filePath, magicSOF, magicSOF, 0);
         }
     }
 }

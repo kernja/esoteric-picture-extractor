@@ -16,16 +16,25 @@ namespace EsotericPictureExtractor.ConsoleApp
             var pngService = services.GetRequiredService<IPNGService>();
             var jfifService = services.GetRequiredService<IJFIFService>();
             var hPIService = services.GetRequiredService<IHPIService>();
+            var gzipService = services.GetRequiredService<IGZIPService>();
             var fileSystemService = services.GetRequiredService<IFileSystemService>();
-            var files = hPIService.ExtractContents("C:\\Users\\Jeff\\Downloads\\hpi-images\\970801_4743_1014_oslps.hpi");
-            //pkgvar files = bz2Service.ExtractContents("C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Vector1_CNT.dat");
-            //var files = jpg2kService.ExtractContents("C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Raster0_CNT.dat");
 
-            if (files.Count > 0)
+            var sourceFile = "C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Raster0_CNT.dat";
+            var outputFolder = "C:\\Users\\Jeff\\OneDrive\\Dropbox\\ax5\\CosmiClip\\Raster0b_CNT\\";
+
+            jpg2kService.ExtractStream(sourceFile);
+            /*
+            var extractedFiles = gzipService.ExtractContents(sourceFile);
+
+            var count = 1;
+            if (extractedFiles.Count > 0)
             {
-                fileSystemService.WriteBinary(".\\test4.png", files.First());
-                //fileSystemService.WriteBinary(".\\test.jp2", files.First());
-            }
+                foreach (var f in extractedFiles)
+                {
+                    fileSystemService.WriteBinary($"{outputFolder}{count}.gzip", f);
+                    count++;
+                }
+            }*/
         }
 
         private static ServiceProvider CreateServices()
@@ -42,6 +51,8 @@ namespace EsotericPictureExtractor.ConsoleApp
                 .AddTransient<IPNGService, PNGService>()
                 .AddTransient<IJFIFService, JFIFService>()
                 .AddTransient<IHPIService, HPIService>()
+                .AddTransient<IGZIPService, GZIPService>()
+                .AddTransient<IFileStreamExtractService, FileStreamExtractService>()
                 .AddSingleton<IConfiguration>(configuration);
 
             return serviceProvider.BuildServiceProvider();

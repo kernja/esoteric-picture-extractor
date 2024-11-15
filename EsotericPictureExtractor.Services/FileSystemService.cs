@@ -13,6 +13,8 @@ namespace EsotericPictureExtractor.Services
         void WriteText(string path, string[] content);
         void WriteText(string path, string content);
         void WriteBinary(string path, byte[] content);
+
+        Stream GetStream(string path);
     }
     public class FileSystemService : IFileSystemService
     {
@@ -89,6 +91,12 @@ namespace EsotericPictureExtractor.Services
                 throw new Exception("Unable to load file, see inner exception.", ex);
             }
 
+        }
+
+        public Stream GetStream(string path)
+        {
+            var reader = new StreamReader(path);
+            return reader.BaseStream;
         }
     }
 }
