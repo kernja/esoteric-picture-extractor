@@ -19,7 +19,7 @@ namespace EsotericPictureExtractor.ConsoleApp
             var gzipService = services.GetRequiredService<IGZIPService>();
             var fileSystemService = services.GetRequiredService<IIOService>();
 
-            var sourceFile = "C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Raster0_CNT.dat";
+            var sourceFile = "C:\\Users\\Jeff\\source\\repos\\EsotericPictureExtractor\\testImages\\combinedJP2Photos.dat";
             var outputFolder = "C:\\Users\\Jeff\\OneDrive\\Dropbox\\ax5\\CosmiClip\\Raster0b_CNT\\";
 
             var file = new IOService();
@@ -28,7 +28,7 @@ namespace EsotericPictureExtractor.ConsoleApp
                 int count = 1;
                 int b;
                 b = s.ReadByte();
-                while (b >= 0 && count < 6)
+                while (b >= 0)
                 {
                     var result = jpg2kService.ProcessStream(b);
                     if (result.withFile == true)
