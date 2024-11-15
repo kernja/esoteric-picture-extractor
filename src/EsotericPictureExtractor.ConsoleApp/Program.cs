@@ -1,4 +1,5 @@
 ﻿using EsotericPictureExtractor.Services;
+using EsotericPictureExtractor.Services.Formats;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,10 +18,12 @@ namespace EsotericPictureExtractor.ConsoleApp
             var jfifService = services.GetRequiredService<IJFIFService>();
             var hpiService = services.GetRequiredService<IHPIService>();
             var gzipService = services.GetRequiredService<IGZIPService>();
+            var wmfService = services.GetRequiredService<IWMFService>();
+            var emfService = services.GetRequiredService<IEMFService>();
             var fileSystemService = services.GetRequiredService<IIOService>();
 
-            var sourceFile = "C:\\Users\\Jeff\\source\\repos\\EsotericPictureExtractor\\testImages\\combinedJP2Photos.dat";
-            var outputFolder = "C:\\Users\\Jeff\\OneDrive\\Dropbox\\ax5\\CosmiClip\\Raster0b_CNT\\";
+            var sourceFile = "C:\\Users\\Jeff\\source\\repos\\EsotericPictureExtractor\\testFiles\\combinedFiles.dat";
+            var outputFolder = "C:\\Users\\Jeff\\source\\repos\\EsotericPictureExtractor\\testFiles\\";
 
             var file = new IOService();
             using (var s = file.GetStream(sourceFile))
@@ -30,10 +33,10 @@ namespace EsotericPictureExtractor.ConsoleApp
                 b = s.ReadByte();
                 while (b >= 0)
                 {
-                    var result = jpg2kService.ProcessStream(b);
+                    var result = wmfService.ProcessStream(b);
                     if (result.withFile == true)
                     {
-                        file.WriteBinary($"./testStream_{count}{result.extension!}", result.fileBytes!);
+                        file.WriteBinary($"{outputFolder}testStream_{count}{result.extension!}", result.fileBytes!);
                         count++;
                     }
 
@@ -58,6 +61,8 @@ namespace EsotericPictureExtractor.ConsoleApp
                 .AddTransient<IJFIFService, JFIFService>()
                 .AddTransient<IHPIService, HPIService>()
                 .AddTransient<IGZIPService, GZIPService>()
+                .AddTransient<IWMFService, WMFService>()
+                .AddTransient<IEMFService, EMFService>()
                 .AddTransient<IStreamExtractService, StreamExtractService>()
                 .AddSingleton<IConfiguration>(configuration);
 

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EsotericPictureExtractor.Services
+namespace EsotericPictureExtractor.Services.Formats
 {
     public interface IPNGService
     {
-         (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
+        (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
     public class PNGService : BaseFileService, IPNGService

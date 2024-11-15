@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EsotericPictureExtractor.Services
+namespace EsotericPictureExtractor.Services.Formats
 {
-    public interface IGZIPService
+    public interface IWMFService
     {
         (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
-    public class GZIPService : BaseFileService, IGZIPService
+    public class WMFService : BaseFileService, IWMFService
     {
-        public GZIPService(IStreamExtractService streamExtractService)
+        public WMFService(IStreamExtractService streamExtractService)
             : base(streamExtractService,
-              new byte[] { 31, 139, 08, 00 }, new byte[] { 31, 139, 08, 00 }, ".gz")
+              new byte[] { 215, 205, 198, 154 }, new byte[] { 3, 0, 0, 0, 0, 0 }, ".wmf")
         {
         }
     }

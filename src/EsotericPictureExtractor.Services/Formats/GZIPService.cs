@@ -4,20 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EsotericPictureExtractor.Services
+namespace EsotericPictureExtractor.Services.Formats
 {
-    public interface IBZ2Service
+    public interface IGZIPService
     {
         (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
-    public class BZ2Service : BaseFileService, IBZ2Service
+    public class GZIPService : BaseFileService, IGZIPService
     {
-        public BZ2Service(IStreamExtractService streamExtractService)
+        public GZIPService(IStreamExtractService streamExtractService)
             : base(streamExtractService,
-              new byte[] { 66, 90, 104, 57 }, new byte[] { 69, 56, 80, 144 }, ".bz2")
+              new byte[] { 31, 139, 08, 00 }, new byte[] { 31, 139, 08, 00 }, ".gz")
         {
-
         }
     }
 }

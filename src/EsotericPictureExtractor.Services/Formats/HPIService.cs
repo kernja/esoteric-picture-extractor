@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EsotericPictureExtractor.Services
+namespace EsotericPictureExtractor.Services.Formats
 {
     public interface IHPIService
     {
-       (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
+        (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
     public class HPIService : BaseFileService, IHPIService
@@ -52,7 +52,8 @@ namespace EsotericPictureExtractor.Services
                 }
 
                 return (true, jpgImage.ToByteArray(MagickFormat.Png));
-            } else
+            }
+            else
             {
                 throw new InvalidDataException("There is no JFIF (JPG) file within the data stream.");
             }

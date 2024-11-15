@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EsotericPictureExtractor.Services
+namespace EsotericPictureExtractor.Services.Formats
 {
     public interface IJFIFService
     {
@@ -19,6 +19,6 @@ namespace EsotericPictureExtractor.Services
               new byte[] { 255, 216, 255 }, new byte[] { 255, 217 }, ".jpg")
         {
         }
-      
+
     }
 }
