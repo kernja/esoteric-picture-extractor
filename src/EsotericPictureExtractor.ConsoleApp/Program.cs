@@ -2,6 +2,7 @@
 using EsotericPictureExtractor.Services.Formats;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.CompilerServices;
 
 namespace EsotericPictureExtractor.ConsoleApp
 {
@@ -9,9 +10,9 @@ namespace EsotericPictureExtractor.ConsoleApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting program...");
+            var arguments = ProcessArgs(args);
+            
             var services = CreateServices();
-
             var jpg2kService = services.GetRequiredService<IJPG2KService>();
             var bz2Service = services.GetRequiredService<IBZ2Service>();
             var pngService = services.GetRequiredService<IPNGService>();
@@ -20,28 +21,28 @@ namespace EsotericPictureExtractor.ConsoleApp
             var gzipService = services.GetRequiredService<IGZIPService>();
             var wmfService = services.GetRequiredService<IWMFService>();
             var emfService = services.GetRequiredService<IEMFService>();
-            var fileSystemService = services.GetRequiredService<IIOService>();
+            var io = services.GetRequiredService<IIOService>();
 
-            var sourceFile = "C:\\Users\\Jeff\\source\\repos\\EsotericPictureExtractor\\testFiles\\combinedFiles.dat";
-            var outputFolder = "C:\\Users\\Jeff\\source\\repos\\EsotericPictureExtractor\\testFiles\\";
+            var sourceFile = arguments.sourceFile;
+            var outputFolder = arguments.targetDirectory;
 
-            var file = new IOService();
-            using (var s = file.GetStream(sourceFile))
+            using (var s = io.GetStream(sourceFile))
             {
-                int count = 1;
+              
                 int b;
                 b = s.ReadByte();
                 while (b >= 0)
                 {
-                    var result = wmfService.ProcessStream(b);
-                    if (result.withFile == true)
-                    {
-                        file.WriteBinary($"{outputFolder}testStream_{count}{result.extension!}", result.fileBytes!);
-                        count++;
-                    }
+                    if (arguments.mode == "WMF" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, wmfService.ProcessStream(b));
+                    if (arguments.mode == "EMF" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, emfService.ProcessStream(b));
+                    if (arguments.mode == "GZIP" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, gzipService.ProcessStream(b));
+                    if (arguments.mode == "HPI" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, hpiService.ProcessStream(b));
+                    if (arguments.mode == "JFIF" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, jfifService.ProcessStream(b));
+                    if (arguments.mode == "PNG" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, pngService.ProcessStream(b));
+                    if (arguments.mode == "BZ2" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, bz2Service.ProcessStream(b));
+                    if (arguments.mode == "JP2" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, jpg2kService.ProcessStream(b));
 
                     b = s.ReadByte();
-                    
                 }
 
             }
@@ -67,6 +68,19 @@ namespace EsotericPictureExtractor.ConsoleApp
                 .AddSingleton<IConfiguration>(configuration);
 
             return serviceProvider.BuildServiceProvider();
+        }
+
+        private static (string sourceFile, string targetDirectory, string mode)  ProcessArgs(string[] args)
+        {
+            if (args.Length != 3) throw new Exception("Invalid number of arguments.");
+            return (args[0], args[1], args[2].ToUpper());
+        }
+
+        private static void ProcessStreams(IIOService ioService, string outputFolder, (bool withFile, byte[]? fileBytes, string? extension) result)
+        {
+            if (result.withFile == false) return;
+
+            ioService.WriteBinary($"{outputFolder}\\{DateTime.Now.ToString("MM-dd-yyyy-hh-mm-ss-f")}{result.extension!}", result.fileBytes!);
         }
     }
 }
