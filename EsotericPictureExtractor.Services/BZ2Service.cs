@@ -8,22 +8,16 @@ namespace EsotericPictureExtractor.Services
 {
     public interface IBZ2Service
     {
-        IList<byte[]> ExtractContents(string filePath);
+        (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
-    public class BZ2Service : IBZ2Service
+    public class BZ2Service : BaseFileService, IBZ2Service
     {
-        private readonly IFileExtractService _fileExtractService;
-        public BZ2Service(IFileExtractService fileExtractService)
+        public BZ2Service(IStreamExtractService streamExtractService)
+            : base(streamExtractService,
+              new byte[] { 66, 90, 104, 57 }, new byte[] { 69, 56, 80, 144 }, ".bz2")
         {
-            _fileExtractService = fileExtractService;
-        }
-        public IList<byte[]> ExtractContents(string filePath)
-        {
-            var magicSOF = new byte[] { 66, 90, 104, 57 };
-            var magicEOF = new byte[] { 69, 56, 80, 144 };
 
-            return _fileExtractService.ExtractContents(filePath, magicSOF, magicEOF);
         }
     }
 }

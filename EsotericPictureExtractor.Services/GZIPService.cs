@@ -8,20 +8,15 @@ namespace EsotericPictureExtractor.Services
 {
     public interface IGZIPService
     {
-        IList<byte[]> ExtractContents(string filePath);
+        (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
-    public class GZIPService : IGZIPService
+    public class GZIPService : BaseFileService, IGZIPService
     {
-        private readonly IFileExtractService _fileExtractService;
-        public GZIPService(IFileExtractService fileExtractService) { 
-            _fileExtractService = fileExtractService;
-        }
-        public IList<byte[]> ExtractContents(string filePath)
+        public GZIPService(IStreamExtractService streamExtractService)
+            : base(streamExtractService,
+              new byte[] { 31, 139, 08, 00 }, new byte[] { 31, 139, 08, 00 }, ".gz")
         {
-            var magicSOF = new byte[] { 31, 139, 08, 00 };
-
-            return _fileExtractService.ExtractContents(filePath, magicSOF, magicSOF, 0);
         }
     }
 }

@@ -17,42 +17,31 @@ namespace EsotericPictureExtractor.ConsoleApp
             var jfifService = services.GetRequiredService<IJFIFService>();
             var hpiService = services.GetRequiredService<IHPIService>();
             var gzipService = services.GetRequiredService<IGZIPService>();
-            var fileSystemService = services.GetRequiredService<IFileSystemService>();
+            var fileSystemService = services.GetRequiredService<IIOService>();
 
-            var sourceFile = "C:\\Users\\Jeff\\Downloads\\hpi-images\\970801_4743_1014_oslps.hpi";
+            var sourceFile = "C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Raster0_CNT.dat";
             var outputFolder = "C:\\Users\\Jeff\\OneDrive\\Dropbox\\ax5\\CosmiClip\\Raster0b_CNT\\";
 
-            var file = new FileSystemService();
+            var file = new IOService();
             using (var s = file.GetStream(sourceFile))
             {
+                int count = 1;
                 int b;
                 b = s.ReadByte();
-                while (b >= 0)
+                while (b >= 0 && count < 6)
                 {
-
-                    var result = hpiService.ProcessStream(b);
+                    var result = jpg2kService.ProcessStream(b);
                     if (result.withFile == true)
                     {
-                        file.WriteBinary($"./testStream{result.extension!}", result.fileBytes!);
+                        file.WriteBinary($"./testStream_{count}{result.extension!}", result.fileBytes!);
+                        count++;
                     }
 
                     b = s.ReadByte();
+                    
                 }
 
             }
-
-            /*
-            var extractedFiles = gzipService.ExtractContents(sourceFile);
-
-            var count = 1;
-            if (extractedFiles.Count > 0)
-            {
-                foreach (var f in extractedFiles)
-                {
-                    fileSystemService.WriteBinary($"{outputFolder}{count}.gzip", f);
-                    count++;
-                }
-            }*/
         }
 
         private static ServiceProvider CreateServices()
@@ -62,15 +51,14 @@ namespace EsotericPictureExtractor.ConsoleApp
                  .Build();
 
             var serviceProvider = new ServiceCollection()
-                .AddTransient<IFileSystemService, FileSystemService>()
-                .AddTransient<IFileExtractService, FileExtractService>()
+                .AddTransient<IIOService, IOService>()
                 .AddTransient<IJPG2KService, JPG2KService>()
                 .AddTransient<IBZ2Service, BZ2Service>()
                 .AddTransient<IPNGService, PNGService>()
                 .AddTransient<IJFIFService, JFIFService>()
                 .AddTransient<IHPIService, HPIService>()
                 .AddTransient<IGZIPService, GZIPService>()
-                .AddTransient<IFileStreamExtractService, FileStreamExtractService>()
+                .AddTransient<IStreamExtractService, StreamExtractService>()
                 .AddSingleton<IConfiguration>(configuration);
 
             return serviceProvider.BuildServiceProvider();

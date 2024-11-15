@@ -8,18 +8,16 @@ using System.Threading.Tasks;
 namespace EsotericPictureExtractor.Services
 {
 
-    public abstract class ImageService 
+    public abstract class BaseFileService 
     {
-        protected readonly IFileExtractService _fileExtractService;
-        protected readonly IFileStreamExtractService _streamExtractService;
+        protected readonly IStreamExtractService _streamExtractService;
 
         protected byte[] _magicSOF = new byte[0]; 
         protected byte[] _magicEOF = new byte[0];
         protected int _overRead = 0;
         protected string _fileExtension = "";
 
-        public ImageService(IFileExtractService fileExtractService, IFileStreamExtractService streamExtractService, byte[] magicSOF, byte[] magicEOF, string fileExtension, int overRead = 0 ) { 
-            _fileExtractService = fileExtractService;
+        public BaseFileService(IStreamExtractService streamExtractService, byte[] magicSOF, byte[] magicEOF, string fileExtension, int overRead = 0 ) { 
             _streamExtractService = streamExtractService;
 
             _magicSOF = magicSOF;

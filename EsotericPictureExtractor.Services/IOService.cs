@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EsotericPictureExtractor.Services
 {
-    public interface IFileSystemService
+    public interface IIOService
     {
         string ReadText(string path);
         byte[] ReadBinary(string path);
@@ -16,7 +16,7 @@ namespace EsotericPictureExtractor.Services
 
         Stream GetStream(string path);
     }
-    public class FileSystemService : IFileSystemService
+    public class IOService : IIOService
     {
         public string ReadText(string path)
         {

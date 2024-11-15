@@ -1,12 +1,12 @@
 ﻿namespace EsotericPictureExtractor.Services
 {
-    public interface IFileStreamExtractService
+    public interface IStreamExtractService
     {
         void ConfigureStream(byte[] magicSOF, byte[] magicEOF, int overRead = 0);
         (bool withFile, byte[]? fileBytes) ProcessStream(int streamInteger);
 
     }
-    public class FileStreamExtractService : IFileStreamExtractService
+    public class StreamExtractService : IStreamExtractService
     {
         byte[] _magicSOF = new byte[0];
         byte[] _magicEOF = new byte[0];
@@ -56,6 +56,7 @@
                 {
                     var isolatedFile = _fileBytes.ToArray();
 
+                    _fileBytes.Clear();
                     if (_magicSOF.SequenceEqual(_magicEOF)) _fileBytes = _magicSOF.ToList();
                     return (true, isolatedFile);
 
