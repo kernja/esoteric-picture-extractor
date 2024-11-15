@@ -3,7 +3,7 @@
     public interface IFileStreamExtractService
     {
         void ConfigureStream(byte[] magicSOF, byte[] magicEOF, int overRead = 0);
-        (bool withFile, byte[] fileBytes) ProcessStream(int streamInteger);
+        (bool withFile, byte[]? fileBytes) ProcessStream(int streamInteger);
 
     }
     public class FileStreamExtractService : IFileStreamExtractService
@@ -34,7 +34,7 @@
             _fileBytes = new List<byte>();
             _initialized = true;
         }
-        public (bool withFile, byte[] fileBytes) ProcessStream(int streamInteger)
+        public (bool withFile, byte[]? fileBytes) ProcessStream(int streamInteger)
         {
             // Need To configure the stream before we can process it
             if (_initialized == false) throw new InvalidOperationException();
@@ -42,13 +42,13 @@
             byte sB = Convert.ToByte(streamInteger);
 
             _fileBytes.Add(sB);
-            if (_fileBytes.Count < _minBufferLength) return (false, new byte[0]);
+            if (_fileBytes.Count < _minBufferLength) return (false, null);
 
             // Pop the first item in the list if the magic bytes don't align
             if (CompareArrayValues(_magicSOF, _fileBytes.Take(_startLength).ToList(), 0) == false)
             {
                 _fileBytes.RemoveAt(0);
-                return (false, new byte[0]);
+                return (false, null);
             }
             else
             {

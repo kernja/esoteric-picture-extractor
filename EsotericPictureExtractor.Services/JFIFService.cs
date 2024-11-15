@@ -10,13 +10,15 @@ namespace EsotericPictureExtractor.Services
     public interface IJFIFService
     {
         IList<byte[]> ExtractContents(string filePath);
+        (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
-    public class JFIFService : IJFIFService
+    public class JFIFService : ImageService, IJFIFService
     {
-        private readonly IFileExtractService _fileExtractService;
-        public JFIFService(IFileExtractService fileExtractService) { 
-            _fileExtractService = fileExtractService;
+        public JFIFService(IFileExtractService fileExtractService, IFileStreamExtractService streamExtractService)
+            : base(fileExtractService, streamExtractService,
+              new byte[] { 255, 216, 255 }, new byte[] { 255, 217 }, ".jpg")
+        {
         }
         public IList<byte[]> ExtractContents(string filePath)
         {

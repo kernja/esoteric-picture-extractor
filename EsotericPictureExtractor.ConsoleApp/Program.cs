@@ -15,14 +15,32 @@ namespace EsotericPictureExtractor.ConsoleApp
             var bz2Service = services.GetRequiredService<IBZ2Service>();
             var pngService = services.GetRequiredService<IPNGService>();
             var jfifService = services.GetRequiredService<IJFIFService>();
-            var hPIService = services.GetRequiredService<IHPIService>();
+            var hpiService = services.GetRequiredService<IHPIService>();
             var gzipService = services.GetRequiredService<IGZIPService>();
             var fileSystemService = services.GetRequiredService<IFileSystemService>();
 
-            var sourceFile = "C:\\Program Files (x86)\\Cosmi\\Print Perfect Clip Art\\Content\\Raster0_CNT.dat";
+            var sourceFile = "C:\\Users\\Jeff\\Downloads\\hpi-images\\970801_4743_1014_oslps.hpi";
             var outputFolder = "C:\\Users\\Jeff\\OneDrive\\Dropbox\\ax5\\CosmiClip\\Raster0b_CNT\\";
 
-            jpg2kService.ExtractStream(sourceFile);
+            var file = new FileSystemService();
+            using (var s = file.GetStream(sourceFile))
+            {
+                int b;
+                b = s.ReadByte();
+                while (b >= 0)
+                {
+
+                    var result = hpiService.ProcessStream(b);
+                    if (result.withFile == true)
+                    {
+                        file.WriteBinary($"./testStream{result.extension!}", result.fileBytes!);
+                    }
+
+                    b = s.ReadByte();
+                }
+
+            }
+
             /*
             var extractedFiles = gzipService.ExtractContents(sourceFile);
 

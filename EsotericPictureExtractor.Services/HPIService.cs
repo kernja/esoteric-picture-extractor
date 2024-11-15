@@ -9,17 +9,56 @@ namespace EsotericPictureExtractor.Services
 {
     public interface IHPIService
     {
-        IList<byte[]> ExtractContents(string filePath);
+        //IList<byte[]> ExtractContents(string filePath);
+        (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
-    public class HPIService : IHPIService
+    public class HPIService : ImageService, IHPIService
     {
         private readonly IJFIFService _jfifService;
         private readonly IPNGService _pngService;
-        public HPIService(IJFIFService jfifService, IPNGService pngService) {
+
+        public HPIService(IFileExtractService fileExtractService, IFileStreamExtractService streamExtractService,
+            IJFIFService jfifService, IPNGService pngService)
+            : base(fileExtractService, streamExtractService,
+              new byte[] { 137, 72, 80, 73 }, new byte[] { 73, 69, 78, 68 }, ".png", 4)
+        {
             _jfifService = jfifService;
             _pngService = pngService;
         }
+        public override (bool withFile, byte[]? fileBytes) PostProcessing((bool withFile, byte[]? fileBytes) initialResults)
+        {
+            if (initialResults.withFile == false) return initialResults;
+
+            byte[]? jpgBytes = null;
+            byte[]? pngBytes = null;
+
+            foreach (var b in initialResults.fileBytes!)
+            {
+                var jpgResults = _jfifService.ProcessStream(b);
+                var pngResults = _pngService.ProcessStream(b);
+
+                if (jpgResults.withFile) jpgBytes = jpgResults.fileBytes!;
+                if (pngResults.withFile) pngBytes = pngResults.fileBytes!;
+            }
+
+            if (jpgBytes != null)
+            {
+                MagickImage jpgImage = new MagickImage(jpgBytes);
+
+                if (pngBytes != null)
+                {
+                    MagickImage pImage = new MagickImage(pngBytes);
+                    jpgImage.Composite(pImage, CompositeOperator.CopyAlpha);
+                }
+
+                return (true, jpgImage.ToByteArray(MagickFormat.Png));
+            } else
+            {
+                throw new InvalidDataException("There is no JFIF file within the data stream.");
+            }
+        }
+        /*
         public IList<byte[]> ExtractContents(string filePath)
         {
             var jBytes = _jfifService.ExtractContents(filePath);
@@ -42,6 +81,6 @@ namespace EsotericPictureExtractor.Services
             }
 
             return results;
-        }
+        }*/
     }
 }
