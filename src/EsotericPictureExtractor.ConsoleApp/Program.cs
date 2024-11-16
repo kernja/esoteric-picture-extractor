@@ -33,19 +33,21 @@ namespace EsotericPictureExtractor.ConsoleApp
                 b = s.ReadByte();
                 while (b >= 0)
                 {
-                    if (arguments.mode == "WMF" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, wmfService.ProcessStream(b));
-                    if (arguments.mode == "EMF" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, emfService.ProcessStream(b));
-                    if (arguments.mode == "GZIP" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, gzipService.ProcessStream(b));
-                    if (arguments.mode == "HPI" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, hpiService.ProcessStream(b));
-                    if (arguments.mode == "JFIF" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, jfifService.ProcessStream(b));
-                    if (arguments.mode == "PNG" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, pngService.ProcessStream(b));
-                    if (arguments.mode == "BZ2" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, bz2Service.ProcessStream(b));
-                    if (arguments.mode == "JP2" || arguments.mode == "ALL") ProcessStreams(io, arguments.targetDirectory, jpg2kService.ProcessStream(b));
+                    if (arguments.mode.Contains("WMF")) ProcessStreams(io, arguments.targetDirectory, wmfService.ProcessStream(b));
+                    if (arguments.mode.Contains("EMF")) ProcessStreams(io, arguments.targetDirectory, emfService.ProcessStream(b));
+                    if (arguments.mode.Contains("GZIP")) ProcessStreams(io, arguments.targetDirectory, gzipService.ProcessStream(b));
+                    if (arguments.mode.Contains("HPI")) ProcessStreams(io, arguments.targetDirectory, hpiService.ProcessStream(b));
+                    if (arguments.mode.Contains("JFIF")) ProcessStreams(io, arguments.targetDirectory, jfifService.ProcessStream(b));
+                    if (arguments.mode.Contains("PNG")) ProcessStreams(io, arguments.targetDirectory, pngService.ProcessStream(b));
+                    if (arguments.mode.Contains("BZ2")) ProcessStreams(io, arguments.targetDirectory, bz2Service.ProcessStream(b));
+                    if (arguments.mode.Contains("JP2")) ProcessStreams(io, arguments.targetDirectory, jpg2kService.ProcessStream(b));
 
                     b = s.ReadByte();
                 }
 
             }
+
+            if (arguments.mode.Contains("GZIP")) ProcessStreams(io, arguments.targetDirectory, gzipService.Flush());
         }
 
         private static ServiceProvider CreateServices()

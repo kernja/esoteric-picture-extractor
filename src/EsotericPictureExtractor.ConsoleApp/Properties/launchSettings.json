@@ -2,7 +2,7 @@
   "profiles": {
     "EsotericPictureExtractor.ConsoleApp": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\Jeff\\source\\repos\\EsotericPictureExtractor\\testFiles\\combinedFiles.dat\" \"C:\\Users\\Jeff\\source\\repos\\EsotericPictureExtractor\\testFiles\" \"ALL\""
+      "commandLineArgs": "\"../../../../../testFiles/combinedFiles.dat\" \"../../../../../testFiles\" \"GZIP\""
     }
   }
 }
