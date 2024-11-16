@@ -25,7 +25,7 @@ A sample data file named `combinedFiles.dat` is located within the `testFiles` f
 
 The solution is written with:
 * .NET 8
-* Magick.Net (only for processing HPI files in a fast manner)
+* Magick.Net (only for merging HPI layers together, see below)
 
 ## Background
 
@@ -50,6 +50,12 @@ The software installs several large (100MB+) files. These files are named like `
 HPI is a proprietary image format created by Hemera Technologies and used extensively within the `Photo Clip Art 10,000` clip-art collection. As a proprietary format, users had to install software to browse and export HPI-formatted images for use in other applications *one-at-a-time*.
 
 Rather than installing such software, I opened up an HPI file in a binary viewer to discover that the format is just a container for one JPG file and one PNG file. The JPG file contains RGB data whereas the PNG file is a grayscale image used as an alpha channel. Not only does HPI combine the strengths of both formats (JPG compression, PNG transparency), it locks the image in a proprietary format that most users would not be able to bypass.
+
+Since this software uses magic bytes to decompose files, HPI files behave interestingly:
+
+* Running in `HPI` or `ALL` modes will combine the JPG/PNG files together into a transparency-enabled PNG with Magick.Net
+* Running in `JPG`or `ALL` modes will export the RGB layer of an HPI file as a JPG
+* Running in `PNG` or `ALL` modes will export the alpha layer of an HPI file as a PNG
 
 ![JPG layer of an HPI-encoded file of a handled wicker basket](./img/HPI-jpg-layer.jpg)
 ![PNG alpha transparency layer of an HPI-encoded file of a handled wicker basket](./img/HPI-png-layer.png)
