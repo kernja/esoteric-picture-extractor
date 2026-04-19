@@ -1,4 +1,4 @@
-﻿using ImageMagick;
+﻿using SkiaSharp;
 
 namespace FileCarverNet.Services.Formats
 {
@@ -38,20 +38,58 @@ namespace FileCarverNet.Services.Formats
 
             if (jpgBytes != null)
             {
-                MagickImage jpgImage = new MagickImage(jpgBytes);
+                var jpgImage = SKImage.FromEncodedData(jpgBytes);
 
                 if (pngBytes != null)
                 {
-                    MagickImage pImage = new MagickImage(pngBytes);
-                    jpgImage.Composite(pImage, CompositeOperator.CopyAlpha);
+                    var pngImage = SKImage.FromEncodedData(pngBytes);
+                    jpgImage = ApplyAlphaMask(jpgImage, pngImage);
                 }
 
-                return (true, jpgImage.ToByteArray(MagickFormat.Png));
+                return (true, jpgImage.Encode(SKEncodedImageFormat.Png, 100).ToArray());
             }
             else
             {
                 throw new InvalidDataException("There is no JFIF (JPG) file within the data stream.");
             }
+        }
+
+        public static SKImage ApplyAlphaMask(SKImage jpgImage, SKImage pngImage)
+        {
+            // Convert from image to raw bitmap
+            var jpg = SKBitmap.FromImage(jpgImage);
+            var png = SKBitmap.FromImage(pngImage);
+
+            // get the dimensions
+            int width = jpg.Width;
+            int height = jpg.Height;
+
+            // Create the output canvas
+            var result = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+
+            // Get access to the raw pixels
+            var jpgSpan = jpg.GetPixelSpan();
+            var pngSpan = png.GetPixelSpan();
+            var resSpan = result.GetPixelSpan();
+
+            // Each pixel = 4 bytes (BGRA)
+            for (int i = 0; i < width * height; i++)
+            {
+                int idx = i * 4;
+
+                byte b = jpgSpan[idx];
+                byte g = jpgSpan[idx + 1];
+                byte r = jpgSpan[idx + 2];
+
+                byte alpha = pngSpan[idx]; // grayscale -> take B (same as R/G since it's grayscale)
+
+                resSpan[idx] = b;
+                resSpan[idx + 1] = g;
+                resSpan[idx + 2] = r;
+                resSpan[idx + 3] = alpha;
+            }
+
+            return SKImage.FromBitmap(result);
         }
     }
 }
