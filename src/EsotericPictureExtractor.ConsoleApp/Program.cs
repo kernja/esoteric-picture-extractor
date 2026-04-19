@@ -1,17 +1,16 @@
-﻿using EsotericPictureExtractor.Services;
-using EsotericPictureExtractor.Services.Formats;
+﻿using FileCarverNet.Services;
+using FileCarverNet.Services.Formats;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.CompilerServices;
 
-namespace EsotericPictureExtractor.ConsoleApp
+namespace FileCarverNet.ConsoleApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
             var arguments = ProcessArgs(args);
-            
+
             var services = CreateServices();
             var jpg2kService = services.GetRequiredService<IJPG2KService>();
             var bz2Service = services.GetRequiredService<IBZ2Service>();
@@ -61,7 +60,7 @@ namespace EsotericPictureExtractor.ConsoleApp
 
             if (arguments.mode.Contains("GZIP")) ProcessStreams(io, outputFolder, gzipService.Flush());
             //}
-           
+
         }
 
         private static ServiceProvider CreateServices()
@@ -87,7 +86,7 @@ namespace EsotericPictureExtractor.ConsoleApp
             return serviceProvider.BuildServiceProvider();
         }
 
-        private static (string sourceFile, string targetDirectory, string mode)  ProcessArgs(string[] args)
+        private static (string sourceFile, string targetDirectory, string mode) ProcessArgs(string[] args)
         {
             if (args.Length != 3) throw new Exception("Invalid number of arguments.");
             return (args[0], args[1], args[2].ToUpper());

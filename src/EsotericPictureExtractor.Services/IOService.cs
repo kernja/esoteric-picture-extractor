@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EsotericPictureExtractor.Services
+﻿namespace FileCarverNet.Services
 {
     public interface IIOService
     {
@@ -61,12 +55,12 @@ namespace EsotericPictureExtractor.Services
             {
                 throw new Exception("Unable to load file, see inner exception.", ex);
             }
-           
+
         }
         public void WriteText(string path, string content)
         {
             if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
-           
+
             try
             {
                 File.WriteAllText(path, content);
@@ -75,13 +69,13 @@ namespace EsotericPictureExtractor.Services
             {
                 throw new Exception("Unable to load file, see inner exception.", ex);
             }
-            
+
         }
 
         public void WriteBinary(string path, byte[] content)
         {
             if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
-            
+
             try
             {
                 File.WriteAllBytes(path, content);

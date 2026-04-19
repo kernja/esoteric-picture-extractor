@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO.Compression;
-using Microsoft.Extensions.Options;
+﻿using System.IO.Compression;
 
-namespace EsotericPictureExtractor.Services.Formats
+namespace FileCarverNet.Services.Formats
 {
     public interface IMP3Service
     {
@@ -49,11 +43,12 @@ namespace EsotericPictureExtractor.Services.Formats
 
                             return (true, combined);
                         }
-                      
+
                         //
                         //return (true, o.ToArray());
                     }
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
 
                 }
@@ -66,9 +61,9 @@ namespace EsotericPictureExtractor.Services.Formats
         {
             var data = bytes.ToArray();
 
-                return data.Length > 2 &&
-                       data[0] == 0x78 &&
-                       (data[1] == 0x01 || data[1] == 0x9C || data[1] == 0xDA);   
+            return data.Length > 2 &&
+                   data[0] == 0x78 &&
+                   (data[1] == 0x01 || data[1] == 0x9C || data[1] == 0xDA);
         }
     }
 }

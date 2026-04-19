@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EsotericPictureExtractor.Services
+﻿namespace FileCarverNet.Services
 {
 
-    public abstract class BaseFileService 
+    public abstract class BaseFileService
     {
         protected readonly IStreamExtractService _streamExtractService;
 
-        protected byte[] _magicSOF = new byte[0]; 
+        protected byte[] _magicSOF = new byte[0];
         protected byte[] _magicEOF = new byte[0];
         protected int _overRead = 0;
         protected string _fileExtension = "";
         protected bool _flushCheckEnd = true;
 
-        public BaseFileService(IStreamExtractService streamExtractService, byte[] magicSOF, byte[] magicEOF, string fileExtension, int overRead = 0, bool flushCheckEnd = true) { 
+        public BaseFileService(IStreamExtractService streamExtractService, byte[] magicSOF, byte[] magicEOF, string fileExtension, int overRead = 0, bool flushCheckEnd = true)
+        {
             _streamExtractService = streamExtractService;
 
             _magicSOF = magicSOF;

@@ -1,4 +1,4 @@
-﻿namespace EsotericPictureExtractor.Services
+﻿namespace FileCarverNet.Services
 {
     public interface IStreamExtractService
     {

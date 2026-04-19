@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EsotericPictureExtractor.Services.Formats
+﻿namespace FileCarverNet.Services.Formats
 {
     public interface IEMFService
     {
