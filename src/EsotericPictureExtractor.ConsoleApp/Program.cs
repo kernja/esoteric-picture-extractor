@@ -20,7 +20,7 @@ namespace FileCarverNet.ConsoleApp
             var gzipService = services.GetRequiredService<IGZIPService>();
             var wmfService = services.GetRequiredService<IWMFService>();
             var emfService = services.GetRequiredService<IEMFService>();
-            var mp3Service = services.GetRequiredService<IMP3Service>();
+            var mp3Service = services.GetRequiredService<IMP3InPDFService>();
             var io = services.GetRequiredService<IIOService>();
 
             var sourceFile = arguments.sourceFile;
@@ -50,7 +50,7 @@ namespace FileCarverNet.ConsoleApp
                     if (arguments.mode.Contains("PNG")) ProcessStreams(io, outputFolder, pngService.ProcessStream(b));
                     if (arguments.mode.Contains("BZ2")) ProcessStreams(io, outputFolder, bz2Service.ProcessStream(b));
                     if (arguments.mode.Contains("JP2")) ProcessStreams(io, outputFolder, jpg2kService.ProcessStream(b));
-                    if (arguments.mode.Contains("MP3")) ProcessStreams(io, outputFolder, mp3Service.ProcessStream(b));
+                    if (arguments.mode.Contains("MP3-PDF")) ProcessStreams(io, outputFolder, mp3Service.ProcessStream(b));
 
 
                     b = s.ReadByte();
@@ -79,7 +79,7 @@ namespace FileCarverNet.ConsoleApp
                 .AddTransient<IGZIPService, GZIPService>()
                 .AddTransient<IWMFService, WMFService>()
                 .AddTransient<IEMFService, EMFService>()
-                .AddTransient<IMP3Service, MP3Service>()
+                .AddTransient<IMP3InPDFService, MP3InPDFService>()
                 .AddTransient<IStreamExtractService, StreamExtractService>()
                 .AddSingleton<IConfiguration>(configuration);
 

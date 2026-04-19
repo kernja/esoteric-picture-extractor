@@ -2,14 +2,14 @@
 
 namespace FileCarverNet.Services.Formats
 {
-    public interface IMP3Service
+    public interface IMP3InPDFService
     {
         (bool withFile, byte[]? fileBytes, string? extension) ProcessStream(int streamInteger);
     }
 
-    public class MP3Service : BaseFileService, IMP3Service
+    public class MP3InPDFService : BaseFileService, IMP3InPDFService
     {
-        public MP3Service(IStreamExtractService streamExtractService)
+        public MP3InPDFService(IStreamExtractService streamExtractService)
             : base(streamExtractService,
               new byte[] { 0x49, 0x44, 0x33 }, new byte[] { 0x0A, 0x65, 0x6E, 0x64, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6D }, ".mp3")
         {
