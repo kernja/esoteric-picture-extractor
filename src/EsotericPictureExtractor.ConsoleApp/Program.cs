@@ -27,37 +27,40 @@ namespace EsotericPictureExtractor.ConsoleApp
             var sourceFile = arguments.sourceFile;
             var outputFolder = arguments.targetDirectory;
 
+            // Used to process directories
+            /*
             for (var i = 1; i <= 32; i++)
             {
                 if ((i == 21) == false) continue;
 
                 sourceFile = arguments.sourceFile + (i <= 9 ? $"c0{i}.pdf" : $"c{i}.pdf");
                 outputFolder = arguments.targetDirectory + (i <= 9 ? $"CD0{i}" : $"CD{i}");
-                using (var s = io.GetStream(sourceFile))
+            */
+
+            using (var s = io.GetStream(sourceFile))
+            {
+
+                int b = s.ReadByte();
+                while (b >= 0)
                 {
+                    if (arguments.mode.Contains("WMF")) ProcessStreams(io, outputFolder, wmfService.ProcessStream(b));
+                    if (arguments.mode.Contains("EMF")) ProcessStreams(io, outputFolder, emfService.ProcessStream(b));
+                    if (arguments.mode.Contains("GZIP")) ProcessStreams(io, outputFolder, gzipService.ProcessStream(b));
+                    if (arguments.mode.Contains("HPI")) ProcessStreams(io, outputFolder, hpiService.ProcessStream(b));
+                    if (arguments.mode.Contains("JFIF")) ProcessStreams(io, outputFolder, jfifService.ProcessStream(b));
+                    if (arguments.mode.Contains("PNG")) ProcessStreams(io, outputFolder, pngService.ProcessStream(b));
+                    if (arguments.mode.Contains("BZ2")) ProcessStreams(io, outputFolder, bz2Service.ProcessStream(b));
+                    if (arguments.mode.Contains("JP2")) ProcessStreams(io, outputFolder, jpg2kService.ProcessStream(b));
+                    if (arguments.mode.Contains("MP3")) ProcessStreams(io, outputFolder, mp3Service.ProcessStream(b));
 
-                    int b;
+
                     b = s.ReadByte();
-                    while (b >= 0)
-                    {
-                        if (arguments.mode.Contains("WMF")) ProcessStreams(io, outputFolder, wmfService.ProcessStream(b));
-                        if (arguments.mode.Contains("EMF")) ProcessStreams(io, outputFolder, emfService.ProcessStream(b));
-                        if (arguments.mode.Contains("GZIP")) ProcessStreams(io, outputFolder, gzipService.ProcessStream(b));
-                        if (arguments.mode.Contains("HPI")) ProcessStreams(io, outputFolder, hpiService.ProcessStream(b));
-                        if (arguments.mode.Contains("JFIF")) ProcessStreams(io, outputFolder, jfifService.ProcessStream(b));
-                        if (arguments.mode.Contains("PNG")) ProcessStreams(io, outputFolder, pngService.ProcessStream(b));
-                        if (arguments.mode.Contains("BZ2")) ProcessStreams(io, outputFolder, bz2Service.ProcessStream(b));
-                        if (arguments.mode.Contains("JP2")) ProcessStreams(io, outputFolder, jpg2kService.ProcessStream(b));
-                        if (arguments.mode.Contains("MP3")) ProcessStreams(io, outputFolder, mp3Service.ProcessStream(b));
-
-
-                        b = s.ReadByte();
-                    }
-
                 }
 
-                if (arguments.mode.Contains("GZIP")) ProcessStreams(io, outputFolder, gzipService.Flush());
             }
+
+            if (arguments.mode.Contains("GZIP")) ProcessStreams(io, outputFolder, gzipService.Flush());
+            //}
            
         }
 
