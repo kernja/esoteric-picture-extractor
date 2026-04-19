@@ -21,33 +21,44 @@ namespace EsotericPictureExtractor.ConsoleApp
             var gzipService = services.GetRequiredService<IGZIPService>();
             var wmfService = services.GetRequiredService<IWMFService>();
             var emfService = services.GetRequiredService<IEMFService>();
+            var mp3Service = services.GetRequiredService<IMP3Service>();
             var io = services.GetRequiredService<IIOService>();
 
             var sourceFile = arguments.sourceFile;
             var outputFolder = arguments.targetDirectory;
 
-            using (var s = io.GetStream(sourceFile))
+            for (var i = 1; i <= 32; i++)
             {
-              
-                int b;
-                b = s.ReadByte();
-                while (b >= 0)
-                {
-                    if (arguments.mode.Contains("WMF")) ProcessStreams(io, arguments.targetDirectory, wmfService.ProcessStream(b));
-                    if (arguments.mode.Contains("EMF")) ProcessStreams(io, arguments.targetDirectory, emfService.ProcessStream(b));
-                    if (arguments.mode.Contains("GZIP")) ProcessStreams(io, arguments.targetDirectory, gzipService.ProcessStream(b));
-                    if (arguments.mode.Contains("HPI")) ProcessStreams(io, arguments.targetDirectory, hpiService.ProcessStream(b));
-                    if (arguments.mode.Contains("JFIF")) ProcessStreams(io, arguments.targetDirectory, jfifService.ProcessStream(b));
-                    if (arguments.mode.Contains("PNG")) ProcessStreams(io, arguments.targetDirectory, pngService.ProcessStream(b));
-                    if (arguments.mode.Contains("BZ2")) ProcessStreams(io, arguments.targetDirectory, bz2Service.ProcessStream(b));
-                    if (arguments.mode.Contains("JP2")) ProcessStreams(io, arguments.targetDirectory, jpg2kService.ProcessStream(b));
+                if ((i == 21) == false) continue;
 
+                sourceFile = arguments.sourceFile + (i <= 9 ? $"c0{i}.pdf" : $"c{i}.pdf");
+                outputFolder = arguments.targetDirectory + (i <= 9 ? $"CD0{i}" : $"CD{i}");
+                using (var s = io.GetStream(sourceFile))
+                {
+
+                    int b;
                     b = s.ReadByte();
+                    while (b >= 0)
+                    {
+                        if (arguments.mode.Contains("WMF")) ProcessStreams(io, outputFolder, wmfService.ProcessStream(b));
+                        if (arguments.mode.Contains("EMF")) ProcessStreams(io, outputFolder, emfService.ProcessStream(b));
+                        if (arguments.mode.Contains("GZIP")) ProcessStreams(io, outputFolder, gzipService.ProcessStream(b));
+                        if (arguments.mode.Contains("HPI")) ProcessStreams(io, outputFolder, hpiService.ProcessStream(b));
+                        if (arguments.mode.Contains("JFIF")) ProcessStreams(io, outputFolder, jfifService.ProcessStream(b));
+                        if (arguments.mode.Contains("PNG")) ProcessStreams(io, outputFolder, pngService.ProcessStream(b));
+                        if (arguments.mode.Contains("BZ2")) ProcessStreams(io, outputFolder, bz2Service.ProcessStream(b));
+                        if (arguments.mode.Contains("JP2")) ProcessStreams(io, outputFolder, jpg2kService.ProcessStream(b));
+                        if (arguments.mode.Contains("MP3")) ProcessStreams(io, outputFolder, mp3Service.ProcessStream(b));
+
+
+                        b = s.ReadByte();
+                    }
+
                 }
 
+                if (arguments.mode.Contains("GZIP")) ProcessStreams(io, outputFolder, gzipService.Flush());
             }
-
-            if (arguments.mode.Contains("GZIP")) ProcessStreams(io, arguments.targetDirectory, gzipService.Flush());
+           
         }
 
         private static ServiceProvider CreateServices()
@@ -66,6 +77,7 @@ namespace EsotericPictureExtractor.ConsoleApp
                 .AddTransient<IGZIPService, GZIPService>()
                 .AddTransient<IWMFService, WMFService>()
                 .AddTransient<IEMFService, EMFService>()
+                .AddTransient<IMP3Service, MP3Service>()
                 .AddTransient<IStreamExtractService, StreamExtractService>()
                 .AddSingleton<IConfiguration>(configuration);
 
