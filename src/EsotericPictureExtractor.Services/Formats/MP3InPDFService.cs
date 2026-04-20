@@ -25,7 +25,7 @@ namespace FileCarverNet.Services.Formats
             var tailBytes = 9;
             var startBytes = 10;
 
-            for (var i = 2500; i > 1900; i--)
+            for (var i = 2500; i >= 0; i--)
             {
                 var b = initialResults.fileBytes.Skip(startBytes).Skip(i).Take(initialResults.fileBytes.Length - i - tailBytes - startBytes);
 
